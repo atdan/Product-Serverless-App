@@ -13,6 +13,7 @@ const  mongoose = require(`mongoose`);
 // var mongoURL = require('confDB');
 
 const mongoURL = 'mongodb://localhost:27017/Products';
+// const mongoURL =  'mongodb+srv://Atuma:<password>@basic-crud-u4tcz.mongodb.net/test?retryWrites=true&w=majority';
 
 
 const createErrorResponse = (statusCode, message) => ({
