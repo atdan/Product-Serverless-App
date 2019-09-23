@@ -12,7 +12,7 @@ const  mongoose = require(`mongoose`);
 // var Product = require(`./model/Product`);
 // var mongoURL = require('confDB');
 
-const mongoURL = 'mongodb://localhost:27017/products';
+const mongoURL = 'mongodb://localhost:27017/Products';
 
 
 const createErrorResponse = (statusCode, message) => ({
