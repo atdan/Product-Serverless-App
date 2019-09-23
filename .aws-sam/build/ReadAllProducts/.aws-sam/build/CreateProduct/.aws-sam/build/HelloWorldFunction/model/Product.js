@@ -18,7 +18,7 @@ const ProductSchema = new mongoose.Schema({
         type: String
     },
     sku: {
-        type: String
+        type: Number
     },
     status: {
         type: Boolean,

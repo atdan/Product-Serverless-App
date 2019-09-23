@@ -1,9 +1,9 @@
 'use strict';
 
-var Product = require(`/model/Product`);
+var Product = require(`./model/Product`);
 
 
-var conf = require(`/utils/confDB`);
+// var conf = require(`./utils/confDB`);
 
 var {ObjectID} = require('mongodb');
 const  mongoose = require(`mongoose`);

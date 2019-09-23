@@ -81,20 +81,3 @@ Resources:
             Path: /product/{_id}
             Method: put
       CodeUri: UpdateProduct
-Outputs:
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
-  HelloWorldFunction:
-    Description: Hello World Lambda Function ARN
-    Value:
-      Fn::GetAtt:
-      - HelloWorldFunction
-      - Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value:
-      Fn::GetAtt:
-      - HelloWorldFunctionRole
-      - Arn
