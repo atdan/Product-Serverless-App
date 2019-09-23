@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-app
+
+  Sample SAM Template for sam-app
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambdaHandler
+      Runtime: nodejs10.x
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+      CodeUri: HelloWorldFunction
+  CreateProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.createProduct
+      Runtime: nodejs10.x
+      Events:
+        createProduct:
+          Type: Api
+          Properties:
+            Path: /product/create
+            Method: post
+      CodeUri: CreateProduct
+  ReadAllProducts:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.readAllProducts
+      Runtime: nodejs10.x
+      Events:
+        createProduct:
+          Type: Api
+          Properties:
+            Path: /product/all
+            Method: get
+      CodeUri: ReadAllProducts
+  readProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.readProduct
+      Runtime: nodejs10.x
+      Events:
+        createProduct:
+          Type: Api
+          Properties:
+            Path: /product/{_id}
+            Method: get
+      CodeUri: readProduct
+  DeleteProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.readProduct
+      Runtime: nodejs10.x
+      Events:
+        createProduct:
+          Type: Api
+          Properties:
+            Path: /product/{_id}
+            Method: delete
+      CodeUri: DeleteProduct
+  UpdateProduct:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.readProduct
+      Runtime: nodejs10.x
+      Events:
+        createProduct:
+          Type: Api
+          Properties:
+            Path: /product/{_id}
+            Method: put
+      CodeUri: UpdateProduct
+Outputs:
+  HelloWorldApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+  HelloWorldFunction:
+    Description: Hello World Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - HelloWorldFunction
+      - Arn
+  HelloWorldFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+      - HelloWorldFunctionRole
+      - Arn
