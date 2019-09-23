@@ -16,7 +16,7 @@ const mongoURL = 'mongodb://localhost:27017/Products';
 // const mongoURL =  'mongodb+srv://Atuma:<password>@basic-crud-u4tcz.mongodb.net/test?retryWrites=true&w=majority';
 
 
-const createErrorResponse = (statusCode, message) => ({
+const errRes = (statusCode, message) => ({
     statusCode: statusCode || 501,
 
     body: message || 'Incorrect id',
@@ -55,7 +55,7 @@ module.exports.createProduct = (event,  context, callback) => {
             }, (err) => {
 
             }).catch((err) => {
-            callback(null, createErrorResponse(err.statusCode, err.message));
+            callback(null, errRes(err.statusCode, err.message));
         })
             .finally(() => {
                 db.close();
@@ -73,7 +73,7 @@ module.exports.readAllProducts = (event, context, callback) => {
                 callback(null, successRes(200, product))
             })
             .catch((err) => {
-                callback(null, createErrorResponse(err.statusCode, err.message));
+                callback(null, errRes(err.statusCode, err.message));
             })
             .finally(() => {
                 db.close();
@@ -87,7 +87,7 @@ module.exports.readProduct = (event, context, callback) => {
     const _id = event.params._id;
 
     if (!ObjectID.isValid(_id)){
-        callback(null, createErrorResponse(400, 'Invalid id'));
+        callback(null, errRes(400, 'Invalid id'));
         db.close();
         return;
     }
@@ -99,7 +99,7 @@ module.exports.readProduct = (event, context, callback) => {
                 callback(null, successRes(200, product))
             })
             .catch((err) => {
-                callback(null, createErrorResponse(err.statusCode, err.message))
+                callback(null, errRes(err.statusCode, err.message))
             })
             .finally(() => {
                 db.close();
@@ -112,7 +112,7 @@ module.exports.deleteProduct = (event, context, callback) => {
     const _id = event.params._id;
 
     if (!ObjectID.isValid(_id)){
-        callback(null, createErrorResponse(400, 'Incorrect id'));
+        callback(null, errRes(400, 'Incorrect id'));
         db.close();
         return;
     }
@@ -124,7 +124,7 @@ module.exports.deleteProduct = (event, context, callback) => {
                 callback(null, successRes(200, `Product deleted: ${event.body}`))
             })
             .catch((err) => {
-                callback(null, createErrorResponse(err.statusCode, err.message));
+                callback(null, errRes(err.statusCode, err.message));
             })
             .finally(() => {
                 db.close();
@@ -139,7 +139,7 @@ module.exports.updateProduct = (event, context, callback) => {
     let product = {};
 
     if (!ObjectID.isValid(_id)){
-        callback(null, createErrorResponse(400, 'Incorrect id'));
+        callback(null, errRes(400, 'Incorrect id'));
         db.close();
         return;
     }
@@ -160,7 +160,7 @@ module.exports.updateProduct = (event, context, callback) => {
                 callback(null, successRes(200, `Product Updated: ${event.body}`))
             })
             .catch((err) => {
-                callback(err, createErrorResponse(err.statusCode, err.message));
+                callback(err, errRes(err.statusCode, err.message));
             })
             .finally(( ) => {
                 db.close();
