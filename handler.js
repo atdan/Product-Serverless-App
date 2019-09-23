@@ -12,8 +12,8 @@ const  mongoose = require(`mongoose`);
 // var Product = require(`./model/Product`);
 // var mongoURL = require('confDB');
 
-const mongoURL = 'mongodb://localhost:27017/Products';
-// const mongoURL =  'mongodb+srv://Atuma:<password>@basic-crud-u4tcz.mongodb.net/test?retryWrites=true&w=majority';
+// const mongoURL = 'mongodb://localhost:27017/Products';
+const mongoURL =  'mongodb+srv://Atuma:atumadann@basic-crud-u4tcz.mongodb.net/test?retryWrites=true&w=majority';
 
 
 const errRes = (statusCode, message) => ({
