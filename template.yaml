@@ -27,7 +27,7 @@ Resources:
   CreateProduct:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: handler.createProduct
+      Handler: handler.CreateProduct
       Runtime: nodejs10.x
       Events:
         createProduct:
@@ -39,7 +39,7 @@ Resources:
   ReadAllProducts:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: handler.readAllProducts
+      Handler: handler.ReadAllProducts
       Runtime: nodejs10.x
       Events:
         createProduct:
@@ -48,7 +48,7 @@ Resources:
             Path: /product/all
             Method: get
 
-  readProduct:
+  ReadProduct:
     Type: AWS::Serverless::Function
     Properties:
       Handler: handler.readProduct
