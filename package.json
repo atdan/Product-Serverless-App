@@ -2,7 +2,7 @@
   "name": "serverless-crud",
   "version": "1.0.0",
   "description": "",
-  "main": "handler.js",
+  "main": "playground/handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +11,9 @@
   "dependencies": {
     "aws-lambda-local": "^2.0.6",
     "aws-sdk": "^2.533.0",
+    "dotenv": "^8.1.0",
     "mongodb": "^3.3.2",
+    "mongoosastic": "^4.5.1",
     "mongoose": "^5.7.1",
     "validator": "^11.1.0",
     "webpack": "^4.40.2"

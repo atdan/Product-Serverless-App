@@ -8,6 +8,9 @@ tests
 utils
 .idea
 mongo scripts.txt
+playground
+awscli-bundle.zip
+awscli-bundle/
 
 # Serverless directories
 .serverless

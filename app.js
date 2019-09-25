@@ -9,7 +9,7 @@ const mongoURI = 'mongodb://Atuma:atumadann@basic-crud-u4tcz.mongodb.net/Product
 exports.handler = (event, context, callback) => {
     var uri = mongoURI;
 
-    if (atlas_connection_uri != null) {
+    if (atlas_connection_uri != null) {test
         processEvent(event, context, callback);
     }
     else {

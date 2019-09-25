@@ -3,86 +3,42 @@
 var Product = require(`./model/Product`);
 
 
-// var conf = require(`./utils/confDB`);
-
 var {ObjectID} = require('mongodb');
 const  mongoose = require(`mongoose`);
-const MongoClient = require('mongodb');
 
-
-// const mongoURL = 'mongodb://localhost:27017/Products';
-// const mongoURL = 'mongodb://0.0.0.0:27017/Products';
 const mongoURL =  'mongodb+srv://Atuma:atumadann@basic-crud-u4tcz.mongodb.net/Products?retryWrites=true&w=majority';
+// const mongoURL = process.env.MONGO_DB_URL;
 const mongoOptions = {useNewUrlParser: true,
-    useUnifiedTopology :true,
-    connectTimeoutMS: 10000};
+    useUnifiedTopology :true};
 
-// const client = new MongoClient(mongoURL, mongoOptions);
+mongoose.connect(mongoURL, mongoOptions, err => {
+    if (err){
+        console.error(`Error connecting to database: `, err);
 
-
+        return;
+    }
+    console.log('Connected to Database!')
+});
 const errRes = (statusCode, message) => ({
     statusCode: statusCode || 501,
 
     body: message || 'Incorrect id',
 });
-const successRes = (statusCode, body) =>
-{
-    return {
-        statusCode: statusCode,
 
-        body: JSON.stringify(body)
-    };
-};
+function successMessage (product){
 
-function connectReadAll(db, event, context, callback) {
-    db.once('open', () => {
-        Product
-            .find({})
-            .then((product) => {
-                callback(null, successRes(200, product))
-            }, (err) => {
-                console.log("Error: ", err)
-            })
-            .catch((err) => {
-                callback(null, errRes(err.statusCode, err.message));
-            })
-            .finally(() => {
-                db.close();
-            })
-    })
 }
-function connectCreate(db, product){
-    db.once(`open`, () => {
-        product
-            .save()
-            .then((res) => {
-                callback(null, successRes(200, res))
-            }).catch((err) => {
-            callback(null, errRes(err.statusCode, err.message));
-        })
-            .finally(() => {
-                db.close();
-            })
-    })
-}
-module.exports.createProduct = (event,  context, callback) => {
+module.exports.CreateProduct = async (event,context) => {
 
     context.callbackWaitsForEmptyEventLoop = false;
 
-    let db = {};
-    let data = {};
-    let product = {};
-
-    db = mongoose.connect(mongoURL, mongoOptions).connection;
+    let data;
+    let product;
     data = JSON.parse(event.body);
 
     console.log("Data: ", data);
 
-    // db = client.connect(err => {
-    //     const collection = client.db("Products").collection("Products");
-    //
-    //
-    // })
+
     product = new Product({
         id: data.id,
         name: data.name,
@@ -92,135 +48,168 @@ module.exports.createProduct = (event,  context, callback) => {
         status: data.status
     });
 
-    if(db){
-        connectCreate( db, product );
+    console.log(`Product: `, product);
+
+
+    try {
+        await product.save();
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: "Successfully saved to Database!",
+                value: product
+            }),
+
+
+        }
+    }catch (e) {
+        console.log(`Error: `, e);
+        return {
+            statusCode: e.statusCode,
+            message: e.message
+        }
     }
+
 
 };
 
-module.exports.ReadAllProducts = (event, context, callback) => {
+module.exports.ReadAllProducts = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
-    var db = mongoose.connect(mongoURL, mongoOptions).connection;
+    let product;
+    try {
+         product = await Product.find({});
 
-    if (db){
-        connectReadAll(db, event, context, callback)
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: "All documents in the database",
+                value: product
+            }),
+
+
+        }
+
+    }catch (e) {
+        console.log('Error: ', e);
+        errRes(e.statusCode, e.message)
     }
 };
 
-module.exports.readProduct = (event, context, callback) => {
+module.exports.readProduct = async (event, context) => {
 
-    const db = mongoose.connect(mongoURL).connection;
-    const _id = event.params._id;
+    const _id = event.pathParameters._id;
+    console.log("id: ",_id);
+
+    let product;
 
     if (!ObjectID.isValid(_id)){
-        callback(null, errRes(400, 'Invalid id'));
-        db.close();
-        return;
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: `Invalid id: ${_id}`
+            })
+
+        }
     }
 
-    db.once('open', () => {
-        Product
-            .find({_id: _id})
-            .then((product) => {
-                callback(null, successRes(200, product))
+    try {
+        product = await Product.find({_id: _id})
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: `Gotten document with _id: ${_id}`,
+                data: product
             })
-            .catch((err) => {
-                callback(null, errRes(err.statusCode, err.message))
-            })
-            .finally(() => {
-                db.close();
-            })
-    })
+        }
+    }catch (e) {
+        return {
+            statusCode: e.statusCode,
+            body: {
+                error: true,
+                message: e.message
+            }
+        }
+    }
+
 };
 
-module.exports.deleteProduct = (event, context, callback) => {
-    const db = mongoose.connect(mongoURL).connection;
-    const _id = event.params._id;
+module.exports.deleteProduct = async (event, context) => {
+    const _id = event.pathParameters._id;
+    let product;
 
     if (!ObjectID.isValid(_id)){
-        callback(null, errRes(400, 'Incorrect id'));
-        db.close();
-        return;
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: `Invalid id: ${_id}`
+            })
+
+        }
     }
 
-    if (db){
-        db.once('open', () => {
-            Product
-                .remove({_id: _id})
-                .then(() => {
-                    callback(null, successRes(200, `Product deleted: ${event.body}`))
-                })
-                .catch((err) => {
-                    callback(null, errRes(err.statusCode, err.message));
-                })
-                .finally(() => {
-                    db.close();
-                });
-        });
-    }else{
-        console.log('DB connection: error');
-    }
 
+    try {
+        product = await Product.remove({_id: _id})
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: `Deleted document with _id: ${_id}`,
+                data: product
+            })
+        }
+    }catch (e) {
+        return {
+            statusCode: e.statusCode,
+            body: {
+                error: true,
+                message: e.message
+            }
+        }
+    }
 };
 
-module.exports.updateProduct = (event, context, callback) => {
-    const db = mongoose.connect(mongoURL).connection;
+module.exports.updateProduct = async (event, context) => {
     const data = JSON.parse(event.body);
-    const _id = event.params._id;
-    let product = {};
+    const _id = event.pathParameters._id;
+    let product;
 
     if (!ObjectID.isValid(_id)){
-        callback(null, errRes(400, 'Incorrect id'));
-        db.close();
-        return;
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: `Invalid id: ${_id}`
+            })
+
+        }
+
     }
 
-    product = new Product({
-        _id: _id,
-        name: data.name,
-        price: data.price,
-        description: data.description,
-        sku: data.sku,
-        status: data.status
-    });
 
-    db.once('open', () => {
-        Product
-            .findByIdAndUpdate(_id, product)
-            .then(() => {
-                callback(null, successRes(200, `Product Updated: ${event.body}`))
+    try {
+        product = await Product.findByIdAndUpdate(_id, data, {new: true});
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: `Updated document with _id: ${_id}`,
+                data: product
             })
-            .catch((err) => {
-                callback(err, errRes(err.statusCode, err.message));
-            })
-            .finally(( ) => {
-                db.close();
-            })
-    })
+        }
+    }catch (e) {
+        return {
+            statusCode: e.statusCode,
+            body: {
+                error: true,
+                message: e.message
+            }
+        }
+    }
+
+
 
 
 };
 
 
 
-module.exports.hello = async event => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
-
-
-
-
-};

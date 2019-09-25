@@ -8,14 +8,14 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 240
 
 Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
 
-      Handler: app.lambdaHandler
+      Handler: handler.hello
       Runtime: nodejs10.x
       Events:
         HelloWorld:
@@ -33,7 +33,7 @@ Resources:
         createProduct:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /product/create
+            Path: /product
             Method: post
 
   ReadAllProducts:
@@ -63,7 +63,7 @@ Resources:
   DeleteProduct:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: handler.readProduct
+      Handler: handler.deleteProduct
       Runtime: nodejs10.x
       Events:
         createProduct:
@@ -81,10 +81,10 @@ Resources:
         createProduct:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /product/{_id}
+            Path: /product/update/{_id}
             Method: put
 
-#Outputs:
+Outputs:
 #  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
 #  # Find out more about other implicit resources you can reference within SAM
 #  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
@@ -97,3 +97,5 @@ Resources:
 #  HelloWorldFunctionIamRole:
 #    Description: "Implicit IAM Role created for Hello World function"
 #    Value: !GetAtt HelloWorldFunctionRole.Arn
+
+#

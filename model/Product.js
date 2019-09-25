@@ -1,5 +1,6 @@
 const mongoose = require(`mongoose`);
 const validator = require(`validator`);
+const mongoosastic = require(`mongoosastic`);
 
 const ProductSchema = new mongoose.Schema({
 
@@ -25,6 +26,13 @@ const ProductSchema = new mongoose.Schema({
         default: true
     }
 });
-var Product = mongoose.model(`Products`, ProductSchema, `Products`);
+
+ProductSchema.plugin(mongoosastic, {
+    host: "<ES-hostname-here>",
+    port: "<ES-port-here>Number",
+    protocol: "https",
+    auth: "<ES-auth-details-here>"
+});
+const Product = mongoose.model(`Products`, ProductSchema, `Products`);
 
 module.exports = Product;
